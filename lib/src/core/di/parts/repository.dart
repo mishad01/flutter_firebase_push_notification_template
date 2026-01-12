@@ -17,3 +17,8 @@ RouterRepository routerRepository(Ref ref) {
 LocaleRepository localeRepository(Ref ref) {
   return LocaleRepositoryImpl(ref.read(cacheServiceProvider));
 }
+
+@Riverpod(keepAlive: true)
+NotificationRepository notificationRepository(Ref ref) {
+  return NotificationRepositoryImpl(ref.read(notificationServiceProvider));
+}

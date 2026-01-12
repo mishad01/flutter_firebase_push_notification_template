@@ -93,7 +93,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
               Gap(context.spacing.s32),
               FilledButton(
-                onPressed: _onLogin,
+                onPressed: () {
+                  context.goNamed(Routes.home);
+                },
                 child: state.isLoading
                     ? const LoadingIndicator()
                     : Text(context.locale.login),

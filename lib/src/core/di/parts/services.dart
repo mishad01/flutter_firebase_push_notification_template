@@ -11,3 +11,8 @@ CacheService cacheService(Ref ref) {
 RestClient restClientService(Ref ref) {
   return RestClient(ref.read(dioProvider));
 }
+
+@Riverpod(keepAlive: true)
+NotificationService notificationService(Ref ref) {
+  return NotificationServiceImpl();
+}

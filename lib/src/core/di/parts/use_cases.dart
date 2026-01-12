@@ -39,3 +39,17 @@ GetUserLoginStatusUseCase getUserLoginStatusUseCase(Ref ref) {
 MarkOnboardingCompletedUseCase markOnboardingCompletedUseCase(Ref ref) {
   return MarkOnboardingCompletedUseCase(ref.read(routerRepositoryProvider));
 }
+
+@riverpod
+InitializaNotificationUseCase initializaNotificationUseCase(Ref ref) {
+  return InitializaNotificationUseCase(
+    ref.read(notificationRepositoryProvider),
+  );
+}
+
+@riverpod
+GetNotificationStreamUseCase getNotificationStreamUseCase(Ref ref) {
+  return GetNotificationStreamUseCase(
+    ref.read(notificationRepositoryProvider),
+  );
+}
