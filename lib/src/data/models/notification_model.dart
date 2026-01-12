@@ -19,9 +19,7 @@ class NotificationModel extends NotificationEntity
   }
 }
 
-@MappableClass(generateMethods: GenerateMethods.decode)
-class NotificationPayloadModel extends NotificationPayloadEntity
-    with NotificationPayloadModelMappable {
+class NotificationPayloadModel extends NotificationPayloadEntity {
   NotificationPayloadModel({
     required super.type,
     required super.collectionId,
@@ -30,6 +28,31 @@ class NotificationPayloadModel extends NotificationPayloadEntity
   });
 
   factory NotificationPayloadModel.fromJson(Map<String, dynamic> json) {
-    return NotificationPayloadModelMapper.fromJson(json);
+    // Parse the type field manually from string to enum
+    NotificationType type = NotificationType.collection;
+    if (json['type'] is String) {
+      final typeString = (json['type'] as String).toLowerCase();
+      switch (typeString) {
+        case 'collection':
+          type = NotificationType.collection;
+          break;
+        case 'home':
+          type = NotificationType.home;
+          break;
+        case 'cart':
+          type = NotificationType.cart;
+          break;
+        default:
+          // Default to collection if unknown type
+          type = NotificationType.collection;
+      }
+    }
+
+    return NotificationPayloadModel(
+      type: type,
+      collectionId: json['collectionId'] as String? ?? '',
+      collectionTitle: json['collectionTitle'] as String? ?? '',
+      checkOutUrl: json['checkOutUrl'] as String? ?? '',
+    );
   }
 }

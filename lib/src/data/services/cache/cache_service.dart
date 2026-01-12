@@ -9,6 +9,7 @@ enum CacheKey {
   isLoggedIn,
   rememberMe,
   language,
+  fcmToken,
 }
 
 abstract class CacheService {

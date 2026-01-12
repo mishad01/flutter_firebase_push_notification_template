@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/extensions/app_localization.dart';
 import '../../../../../core/extensions/validation.dart';
 import '../../../../../core/utiliity/validation/validation.dart';
+import '../../../../core/router/queued_route/queued_route_provider.dart';
 import '../../../../core/router/routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/link_text.dart';
@@ -36,7 +37,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.listenManual(loginProvider, (previous, next) {
       switch (next) {
         case AsyncData(:final value) when value != null:
-          context.pushReplacementNamed(Routes.home);
+          // Check if there's a queued route to navigate to
+          final queuedRoute = ref
+              .read(queuedRouteProvider.notifier)
+              .consumeQueuedRoute();
+          if (queuedRoute != null) {
+            context.pushReplacementNamed(queuedRoute);
+          } else {
+            context.pushReplacementNamed(Routes.home);
+          }
         case AsyncError(:final error):
           ScaffoldMessenger.of(
             context,

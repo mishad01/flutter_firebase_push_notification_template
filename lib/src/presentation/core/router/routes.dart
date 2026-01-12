@@ -12,4 +12,6 @@ class Routes {
 
   static const String home = '/home';
   static const String profile = '/profile';
+  static const String cart = '/cart';
+  static const String collection = '/collection/:id';
 }

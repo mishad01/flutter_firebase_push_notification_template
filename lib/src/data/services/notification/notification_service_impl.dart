@@ -21,7 +21,7 @@ class NotificationServiceImpl extends NotificationService {
   Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    await _firebaseMessaging.requestPermission();
+    await requestPermission();
     final fcmToken = await _firebaseMessaging.getToken();
     _cachedToken = fcmToken;
     Log.info('FCM Token Cached: $_cachedToken');
@@ -93,6 +93,14 @@ class NotificationServiceImpl extends NotificationService {
 
   void dispose() {
     _notificationController.close();
+  }
+
+  @override
+  Future<bool> requestPermission() async {
+    NotificationSettings notificationSettings = await FirebaseMessaging.instance
+        .requestPermission();
+    return notificationSettings.authorizationStatus ==
+        AuthorizationStatus.authorized;
   }
 }
 
