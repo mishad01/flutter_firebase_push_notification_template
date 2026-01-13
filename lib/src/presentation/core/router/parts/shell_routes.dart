@@ -31,3 +31,30 @@ StatefulShellRoute _shellRoutes(Ref ref) {
     ],
   );
 }
+
+List<RouteBase> _protectedRoutes(Ref ref) {
+  return [
+    GoRoute(
+      path: Routes.cart,
+      name: Routes.cart,
+      pageBuilder: (context, state) {
+        final checkOutUrl = state.uri.queryParameters['checkOutUrl'];
+        return MaterialPage(child: CartPage(checkOutUrl: checkOutUrl));
+      },
+    ),
+    GoRoute(
+      path: Routes.collection,
+      name: Routes.collection,
+      pageBuilder: (context, state) {
+        final collectionId = state.uri.queryParameters['collectionId'];
+        final collectionTitle = state.uri.queryParameters['collectionTitle'];
+        return MaterialPage(
+          child: CollectionPage(
+            collectionId: collectionId,
+            collectionTitle: collectionTitle,
+          ),
+        );
+      },
+    ),
+  ];
+}

@@ -12,4 +12,10 @@ class Routes {
 
   static const String home = '/home';
   static const String profile = '/profile';
+  static const String settings = '/settings';
+  static const String cart = '/cart';
+  static const String collection = '/collection';
+
+  // Query parameter keys
+  static const String redirectToKey = 'redirectTo';
 }

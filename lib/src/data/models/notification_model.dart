@@ -29,7 +29,28 @@ class NotificationPayloadModel extends NotificationPayloadEntity
     required super.checkOutUrl,
   });
 
+  static NotificationType _mapStringToNotificationType(String? type) {
+    switch (type?.toLowerCase()) {
+      case 'cart':
+        return NotificationType.cart;
+      case 'collection':
+        return NotificationType.collection;
+      case 'home':
+        return NotificationType.home;
+      default:
+        return NotificationType.home;
+    }
+  }
+
+  @MappableField(key: 'type')
+  static NotificationType get typeFromString => NotificationType.home;
+
   factory NotificationPayloadModel.fromJson(Map<String, dynamic> json) {
-    return NotificationPayloadModelMapper.fromJson(json);
+    return NotificationPayloadModel(
+      type: _mapStringToNotificationType(json['type'] as String?),
+      collectionId: json['collectionId'] as String,
+      collectionTitle: json['collectionTitle'] as String,
+      checkOutUrl: json['checkOutUrl'] as String,
+    );
   }
 }

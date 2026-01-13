@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../domain/entities/queued_router.dart';
 import '../../application_state/startup_provider/app_startup_provider.dart';
 import '../routes.dart';
 
@@ -38,5 +39,13 @@ class RouterState extends _$RouterState {
     }
 
     state = isLoggedIn ? Routes.home : Routes.login;
+  }
+
+  QueuedRouter? getAndClearQueuedRoute() {
+    final route = ref.read(getQueuedRouteUseCaseProvider).call();
+    if (route != null) {
+      ref.read(clearQueuedRouteUseCaseProvider).call();
+    }
+    return route;
   }
 }

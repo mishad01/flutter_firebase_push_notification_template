@@ -49,7 +49,30 @@ InitializaNotificationUseCase initializaNotificationUseCase(Ref ref) {
 
 @riverpod
 GetNotificationStreamUseCase getNotificationStreamUseCase(Ref ref) {
-  return GetNotificationStreamUseCase(
-    ref.read(notificationRepositoryProvider),
-  );
+  return GetNotificationStreamUseCase(ref.read(notificationRepositoryProvider));
+}
+
+@riverpod
+IsUserLoggedInUseCase isUserLoggedInUseCase(Ref ref) {
+  return IsUserLoggedInUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
+SaveQueuedRouteUseCase saveQueuedRouteUseCase(Ref ref) {
+  return SaveQueuedRouteUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
+GetQueuedRouteUseCase getQueuedRouteUseCase(Ref ref) {
+  return GetQueuedRouteUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
+ClearQueuedRouteUseCase clearQueuedRouteUseCase(Ref ref) {
+  return ClearQueuedRouteUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
+HandleNotificationNavigationUseCase handleNotificationNavigationUseCase(Ref ref) {
+  return HandleNotificationNavigationUseCase(ref.read(routerRepositoryProvider));
 }

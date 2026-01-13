@@ -11,6 +11,8 @@ import '../../features/authentication/forgot_password/view/reset_password_page.d
 import '../../features/authentication/forgot_password/view/reset_password_success_page.dart';
 import '../../features/authentication/login/view/login_page.dart';
 import '../../features/authentication/registration/view/registration_page.dart';
+import '../../features/cart/view/cart_page.dart';
+import '../../features/collection/view/collection_page.dart';
 import '../../features/home/view/home_page.dart';
 import '../../features/onboarding/view/onboarding_page.dart';
 import '../../features/profile/view/profile_page.dart';
@@ -60,6 +62,7 @@ GoRouter goRouter(Ref ref) {
       ),
       ..._onboardingRoutes(ref),
       ..._authenticationRoutes(ref),
+      ..._protectedRoutes(ref),
       _shellRoutes(ref),
     ],
   );
