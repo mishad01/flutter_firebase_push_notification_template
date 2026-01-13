@@ -1,44 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-import '../../../../core/extensions/app_localization.dart';
 import '../../../core/theme/theme.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class CollectionPage extends StatefulWidget {
+  const CollectionPage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<CollectionPage> createState() => _CollectionPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _CollectionPageState extends State<CollectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.locale.profile)),
+      appBar: AppBar(title: const Text('Collection')),
       body: Padding(
         padding: EdgeInsets.all(context.padding.p16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.person, size: 100, color: Colors.grey),
+            const Icon(Icons.collections, size: 100, color: Colors.purple),
             Gap(context.spacing.s16),
             Text(
-              context.locale.profile,
+              'Collection Page',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Gap(context.spacing.s8),
             Text(
-              'This is a protected route that requires authentication.',
+              'This is a public route accessible to all users.',
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             Gap(context.spacing.s16),
             const Text(
-              '🎉 You successfully accessed the profile page after login!',
+              '🎨 Browse collections without authentication!',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.green,
+                color: Colors.purple,
                 fontWeight: FontWeight.bold,
               ),
             ),

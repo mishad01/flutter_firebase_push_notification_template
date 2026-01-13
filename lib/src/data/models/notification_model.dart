@@ -23,13 +23,28 @@ class NotificationModel extends NotificationEntity
 class NotificationPayloadModel extends NotificationPayloadEntity
     with NotificationPayloadModelMappable {
   NotificationPayloadModel({
-    required super.type,
-    required super.collectionId,
-    required super.collectionTitle,
-    required super.checkOutUrl,
-  });
+    String? type,
+    @MappableField(key: 'payload') String? payload,
+  }) : super(
+         type: _mapStringToNotificationType(type),
+         collectionId: payload ?? '',
+         collectionTitle: '',
+         checkOutUrl: '',
+       );
 
-  factory NotificationPayloadModel.fromJson(Map<String, dynamic> json) {
-    return NotificationPayloadModelMapper.fromJson(json);
+  factory NotificationPayloadModel.fromJson(Map<String, dynamic> json) =>
+      NotificationPayloadModelMapper.fromJson(json);
+
+  static NotificationType _mapStringToNotificationType(String? type) {
+    switch (type?.toLowerCase()) {
+      case 'collection':
+        return NotificationType.collection;
+      case 'cart':
+        return NotificationType.cart;
+      case 'home':
+        return NotificationType.home;
+      default:
+        return NotificationType.home;
+    }
   }
 }

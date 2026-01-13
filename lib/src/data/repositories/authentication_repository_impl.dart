@@ -27,15 +27,16 @@ final class AuthenticationRepositoryImpl extends AuthenticationRepository {
       final model = LoginRequestModel.fromEntity(data);
       final response = await remote.login(model.toJson());
 
-      // Save the session if the user has selected the "Remember Me" option
-      if (data.shouldRemeber ?? false) await _saveSession();
+      // Always save login status for authentication guards
+      await local.save(CacheKey.isLoggedIn, true);
+
+      // Save remember me preference separately if selected
+      if (data.shouldRemeber ?? false) {
+        await local.save(CacheKey.rememberMe, true);
+      }
 
       return LoginResponseModel.fromJson(response.data);
     });
-  }
-
-  Future<void> _saveSession() async {
-    await local.save(CacheKey.isLoggedIn, true);
   }
 
   /// Manages the "Remember Me" functionality.
@@ -84,6 +85,10 @@ final class AuthenticationRepositoryImpl extends AuthenticationRepository {
 
   @override
   Future<void> logout() async {
-    await local.remove([CacheKey.isLoggedIn, CacheKey.rememberMe]);
+    await local.remove([
+      CacheKey.isLoggedIn,
+      CacheKey.rememberMe,
+      CacheKey.intendedRoute,
+    ]);
   }
 }

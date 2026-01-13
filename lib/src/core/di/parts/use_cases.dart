@@ -41,6 +41,21 @@ MarkOnboardingCompletedUseCase markOnboardingCompletedUseCase(Ref ref) {
 }
 
 @riverpod
+SaveIntendedRouteUseCase saveIntendedRouteUseCase(Ref ref) {
+  return SaveIntendedRouteUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
+GetIntendedRouteUseCase getIntendedRouteUseCase(Ref ref) {
+  return GetIntendedRouteUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
+ClearIntendedRouteUseCase clearIntendedRouteUseCase(Ref ref) {
+  return ClearIntendedRouteUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
 InitializaNotificationUseCase initializaNotificationUseCase(Ref ref) {
   return InitializaNotificationUseCase(
     ref.read(notificationRepositoryProvider),
@@ -49,7 +64,5 @@ InitializaNotificationUseCase initializaNotificationUseCase(Ref ref) {
 
 @riverpod
 GetNotificationStreamUseCase getNotificationStreamUseCase(Ref ref) {
-  return GetNotificationStreamUseCase(
-    ref.read(notificationRepositoryProvider),
-  );
+  return GetNotificationStreamUseCase(ref.read(notificationRepositoryProvider));
 }

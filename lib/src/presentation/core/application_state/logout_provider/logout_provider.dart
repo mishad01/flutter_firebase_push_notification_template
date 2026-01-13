@@ -21,6 +21,8 @@ class Logout extends _$Logout {
 
     try {
       await ref.read(logoutUseCaseProvider).call();
+      // Clear any intended route when logging out
+      ref.read(clearIntendedRouteUseCaseProvider).call();
       // Invalidate all repository providers to remove cached data
       ref.read(resetRepositoryUseCaseProvider).call(ref);
 

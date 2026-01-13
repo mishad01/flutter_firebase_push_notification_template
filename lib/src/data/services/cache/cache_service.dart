@@ -9,6 +9,7 @@ enum CacheKey {
   isLoggedIn,
   rememberMe,
   language,
+  intendedRoute,
 }
 
 abstract class CacheService {
