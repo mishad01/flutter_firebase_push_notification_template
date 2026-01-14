@@ -1,8 +1,5 @@
-enum NotificationType {
-  collection,
-  cart,
-  home,
-}
+enum NotificationType { collection, cart, home }
+
 class NotificationPayloadEntity {
   NotificationPayloadEntity({
     required this.type,

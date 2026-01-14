@@ -11,7 +11,9 @@ import '../../../../core/router/routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/link_text.dart';
 import '../../../../core/widgets/loading_indicator.dart';
+import '../../../../core/widgets/navigation_shell.dart';
 import '../../../../features/authentication/login/riverpod/login_provider.dart';
+import '../../../home/view/home_page.dart';
 import '../widgets/language_switcher.dart';
 
 part '../widgets/login_form.dart';
@@ -107,7 +109,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
               Gap(context.spacing.s32),
               FilledButton(
-                onPressed: _onLogin,
+                onPressed: () {
+                  _onLogin();
+                },
                 child: state.isLoading
                     ? const LoadingIndicator()
                     : Text(context.locale.login),

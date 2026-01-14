@@ -17,6 +17,26 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Listen to notifications after app is ready
+    // ref.listen(
+    //   StreamProvider(
+    //     (ref) => ref.watch(getNotificationStreamUseCaseProvider).call(),
+    //   ),
+    //   (_, state) {
+    //     state.whenData((notificationEntity) {
+    //       final router = ref.read(goRouterProvider);
+    //       final payload = notificationEntity.payload;
+
+    //       if (payload?.type == NotificationType.collection) {
+    //         router.go(Routes.collection);
+    //       } else if (payload?.type == NotificationType.cart) {
+    //         router.go(Routes.cart);
+    //       } else {
+    //         router.go(Routes.home);
+    //       }
+    //     });
+    //   },
+    // );
     return MediaQuery.withClampedTextScaling(
       maxScaleFactor: 1.5,
       child: MaterialApp.router(

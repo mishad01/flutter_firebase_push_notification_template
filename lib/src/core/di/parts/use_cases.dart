@@ -66,3 +66,20 @@ InitializaNotificationUseCase initializaNotificationUseCase(Ref ref) {
 GetNotificationStreamUseCase getNotificationStreamUseCase(Ref ref) {
   return GetNotificationStreamUseCase(ref.read(notificationRepositoryProvider));
 }
+
+@riverpod
+IsAuthenticatedUseCase isAuthenticatedUseCase(Ref ref) {
+  return IsAuthenticatedUseCase(ref.read(routerRepositoryProvider));
+}
+
+@riverpod
+GetFcmTokenUseCase getFcmTokenUseCase(Ref ref) {
+  return GetFcmTokenUseCase(ref.read(notificationRepositoryProvider));
+}
+
+@riverpod
+GetNotificationPayloadUseCase getNotificationPayloadUseCase(Ref ref) {
+  return GetNotificationPayloadUseCase(
+    ref.read(notificationRepositoryProvider),
+  );
+}

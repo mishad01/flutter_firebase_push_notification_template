@@ -24,12 +24,14 @@ class NotificationPayloadModel extends NotificationPayloadEntity
     with NotificationPayloadModelMappable {
   NotificationPayloadModel({
     String? type,
-    @MappableField(key: 'payload') String? payload,
+    String? collectionId,
+    String? collectionTitle,
+    String? checkOutUrl,
   }) : super(
          type: _mapStringToNotificationType(type),
-         collectionId: payload ?? '',
-         collectionTitle: '',
-         checkOutUrl: '',
+         collectionId: collectionId ?? '',
+         collectionTitle: collectionTitle ?? '',
+         checkOutUrl: checkOutUrl ?? '',
        );
 
   factory NotificationPayloadModel.fromJson(Map<String, dynamic> json) =>

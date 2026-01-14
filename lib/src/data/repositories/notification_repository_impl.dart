@@ -1,4 +1,5 @@
 import '../../domain/entities/notification_entity.dart';
+import '../../domain/entities/notification_payload_entity.dart';
 import '../../domain/repositories/notification_repository.dart';
 import '../services/notification/notification_service.dart';
 
@@ -20,4 +21,7 @@ class NotificationRepositoryImpl extends NotificationRepository {
   @override
   Stream<NotificationEntity> get onNotification =>
       _notificationService.onNotification;
+
+  @override
+  NotificationPayloadEntity? get payload => _notificationService.payload;
 }

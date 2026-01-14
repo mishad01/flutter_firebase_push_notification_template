@@ -3,12 +3,17 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../../../core/logger/log.dart';
+import '../../../domain/entities/notification_payload_entity.dart';
 import '../../models/notification_model.dart';
 import 'notification_service.dart';
 
 class NotificationServiceImpl extends NotificationService {
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  FirebaseMessaging get _firebaseMessaging => FirebaseMessaging.instance;
   String? _cachedToken;
+
+  NotificationPayloadEntity? _payload;
+  @override
+  NotificationPayloadEntity? get payload => _payload;
 
   final _notificationController =
       StreamController<NotificationModel>.broadcast();
@@ -41,6 +46,7 @@ class NotificationServiceImpl extends NotificationService {
 
       final notification = _parseNotification(message);
       if (notification != null) {
+        _payload = notification.payload;
         _notificationController.add(notification);
       }
     });
@@ -52,6 +58,7 @@ class NotificationServiceImpl extends NotificationService {
 
       final notification = _parseNotification(message);
       if (notification != null) {
+        _payload = notification.payload;
         _notificationController.add(notification);
       }
     });
@@ -64,9 +71,17 @@ class NotificationServiceImpl extends NotificationService {
 
       final notification = _parseNotification(initialMessage);
       if (notification != null) {
+        _payload = notification.payload;
         _notificationController.add(notification);
       }
     }
+
+    // Handle FCM token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      _cachedToken = newToken;
+      Log.info('FCM Token refreshed: $newToken');
+      // TODO: Send updated token to backend
+    });
   }
 
   NotificationModel? _parseNotification(RemoteMessage message) {
@@ -88,7 +103,13 @@ class NotificationServiceImpl extends NotificationService {
 
   @override
   Future<String?> getFcmToken() async {
-    return await FirebaseMessaging.instance.getToken();
+    // Return cached token first (faster)
+    if (_cachedToken != null) return _cachedToken;
+
+    // Fallback to fresh token request
+    final token = await FirebaseMessaging.instance.getToken();
+    _cachedToken = token;
+    return token;
   }
 
   void dispose() {

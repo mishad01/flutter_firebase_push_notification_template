@@ -59,3 +59,13 @@ final class ClearIntendedRouteUseCase {
     repository.clearIntendedRoute();
   }
 }
+
+final class IsAuthenticatedUseCase {
+  IsAuthenticatedUseCase(this.repository);
+
+  final RouterRepository repository;
+
+  bool call() {
+    return repository.isUserLoggedIn();
+  }
+}

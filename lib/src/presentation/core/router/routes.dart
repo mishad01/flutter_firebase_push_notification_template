@@ -14,4 +14,6 @@ class Routes {
   static const String profile = '/profile';
   static const String collection = '/collection';
   static const String cart = '/cart';
+  static const String notificationTest = '/notification-test';
+  static const String notification = '/notification';
 }

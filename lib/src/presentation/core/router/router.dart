@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/di/dependency_injection.dart';
 import '../../../core/extensions/riverpod_extensions.dart';
 import '../../../core/logger/log.dart';
+import '../../../domain/entities/notification_payload_entity.dart';
 import '../../features/authentication/forgot_password/view/create_new_password_page.dart';
 import '../../features/authentication/forgot_password/view/email_verification_page.dart';
 import '../../features/authentication/forgot_password/view/reset_password_page.dart';
@@ -15,6 +16,7 @@ import '../../features/authentication/registration/view/registration_page.dart';
 import '../../features/cart/view/cart_page.dart';
 import '../../features/collection/view/collection_page.dart';
 import '../../features/home/view/home_page.dart';
+import '../../features/notification_test/view/notification_test_page.dart';
 import '../../features/onboarding/view/onboarding_page.dart';
 import '../../features/profile/view/profile_page.dart';
 import '../../features/splash/view/splash_page.dart';
@@ -32,6 +34,30 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'Root');
 
 @Riverpod(keepAlive: true)
 GoRouter goRouter(Ref ref) {
+  final notificationRouteUseCase = ref.read(
+    getNotificationStreamUseCaseProvider,
+  );
+  notificationRouteUseCase.call().listen((notificationEntity) {
+    final context = _rootNavigatorKey.currentContext;
+    if (context == null) return;
+    final payload = notificationEntity.payload;
+    if (payload != null) {
+      Log.info(
+        'Received notification with payload type: ${payload.type}, navigating accordingly.',
+      );
+      switch (payload.type) {
+        case NotificationType.collection:
+          context.go(Routes.collection);
+          break;
+        case NotificationType.cart:
+          context.go(Routes.cart);
+          break;
+        default:
+          context.go(Routes.home);
+      }
+    }
+  });
+
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
@@ -90,4 +116,17 @@ GoRouter goRouter(Ref ref) {
       _shellRoutes(ref),
     ],
   );
+
+  // void _routeBasedOnNotificationType(NotificationPayloadEntity payload) {
+  //   switch (payload.type) {
+  //     case NotificationType.collection:
+  //       router.go(Routes.collection);
+  //       break;
+  //     case NotificationType.cart:
+  //       router.go(Routes.cart);
+  //       break;
+  //     default:
+  //       router.go(Routes.home);
+  //   }
+  // }
 }

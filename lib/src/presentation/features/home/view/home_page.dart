@@ -130,6 +130,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                         icon: const Icon(Icons.person),
                         label: Text('Go to ${context.locale.profile}'),
                       ),
+
+                      OutlinedButton(
+                        onPressed: () {
+                          context.pushNamed(Routes.notification);
+                        },
+                        child: const Text('Go to notification'),
+                      ),
                     ],
                   ),
                 ),

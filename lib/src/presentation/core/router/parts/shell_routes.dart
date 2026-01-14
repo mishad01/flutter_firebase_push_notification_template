@@ -50,6 +50,17 @@ StatefulShellRoute _shellRoutes(Ref ref) {
           ),
         ],
       ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: Routes.notification,
+            name: Routes.notification,
+            pageBuilder: (context, state) {
+              return const MaterialPage(child: NotificationTestPage());
+            },
+          ),
+        ],
+      ),
     ],
   );
 }
