@@ -8,6 +8,7 @@ A comprehensive, scalable foundation for building maintainable Flutter applicati
 
 - **Clean Architecture**: Layered architecture with clear separation of concerns
 - **Complete Authentication**: Login, registration, password reset, and remember me functionality
+- **Firebase Push Notifications**: Production-ready FCM implementation with Clean Architecture
 - **Modern Navigation**: Declarative routing with go_router and deep linking support
 - **Comprehensive Theming**: Light/dark mode with extensible theme system
 - **State Management**: Riverpod with dependency injection and code generation
@@ -179,6 +180,18 @@ flutter_template/
 
 ## Features Implementation
 
+### Features Implementation
+
+### Firebase Push Notifications
+- **Multi-State Handling**: Foreground, background, and terminated states
+- **Platform Permissions**: iOS APNs and Android FCM with proper permission flows
+- **Clean Architecture**: Domain entities, use cases, and repository pattern
+- **Navigation Integration**: Deep linking from notifications with GoRouter
+- **Custom UI**: In-app notification banners and local notifications
+- **Topic Subscriptions**: User-based notification preferences
+- **Analytics**: Track notification engagement and performance
+- **Token Management**: Automatic refresh and backend synchronization
+
 ### Authentication System
 - **Login**: Email/password authentication with validation
 - **Registration**: User signup with form validation
@@ -343,6 +356,14 @@ flutter_gen:
 ## Documentation
 
 ### Available Documentation
+- **[Firebase Push Notifications](docs/notebooks/README.md)**: Complete guide for FCM implementation
+  - [Journey Overview](docs/notebooks/00_journey_overview.md) - Your roadmap
+  - [Firebase Setup](docs/notebooks/01_firebase_setup_guide.md) - Getting started
+  - [Notification States & Permissions](docs/notebooks/02_notification_states_and_permissions.md) - Platform behaviors
+  - [Clean Architecture Implementation](docs/notebooks/03_implementation_guide.md) - Code walkthrough
+  - [Advanced Features](docs/notebooks/04_advanced_features.md) - Custom UI, topics, analytics
+  - [Testing & Debugging](docs/notebooks/05_testing_guide.md) - Quality assurance
+  - [Quick Reference](docs/notebooks/QUICK_REFERENCE.md) - Cheat sheet
 - **[Dependency Injection](docs/dependency_injection.md)**: DI system documentation
 
 ### Code Documentation
