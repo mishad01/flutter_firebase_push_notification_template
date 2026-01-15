@@ -25,6 +25,7 @@ import '../../domain/use_cases/notification_use_case.dart';
 import '../../domain/use_cases/reset_repository_use_case.dart';
 import '../../domain/use_cases/router_use_case.dart';
 import '../../presentation/core/router/router.dart';
+import '../../presentation/core/services/notification_navigation_service.dart';
 
 part 'dependency_injection.g.dart';
 part 'parts/externals.dart';

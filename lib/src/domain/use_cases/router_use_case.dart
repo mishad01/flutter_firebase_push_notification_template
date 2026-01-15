@@ -29,3 +29,43 @@ final class MarkOnboardingCompletedUseCase {
     repository.saveOnboardingAsCompleted();
   }
 }
+
+final class SaveIntendedRouteUseCase {
+  SaveIntendedRouteUseCase(this.repository);
+
+  final RouterRepository repository;
+
+  void call(String route) {
+    repository.saveIntendedRoute(route);
+  }
+}
+
+final class GetIntendedRouteUseCase {
+  GetIntendedRouteUseCase(this.repository);
+
+  final RouterRepository repository;
+
+  String? call() {
+    return repository.getIntendedRoute();
+  }
+}
+
+final class ClearIntendedRouteUseCase {
+  ClearIntendedRouteUseCase(this.repository);
+
+  final RouterRepository repository;
+
+  void call() {
+    repository.clearIntendedRoute();
+  }
+}
+
+final class IsAuthenticatedUseCase {
+  IsAuthenticatedUseCase(this.repository);
+
+  final RouterRepository repository;
+
+  bool call() {
+    return repository.isUserLoggedIn();
+  }
+}

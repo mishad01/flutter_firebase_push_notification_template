@@ -16,3 +16,8 @@ RestClient restClientService(Ref ref) {
 NotificationService notificationService(Ref ref) {
   return NotificationServiceImpl();
 }
+
+@Riverpod(keepAlive: true)
+NotificationNavigationService notificationNavigationService(Ref ref) {
+  return NotificationNavigationService();
+}

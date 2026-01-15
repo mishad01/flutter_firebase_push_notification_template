@@ -28,6 +28,39 @@ StatefulShellRoute _shellRoutes(Ref ref) {
           ),
         ],
       ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: Routes.collection,
+            name: Routes.collection,
+            pageBuilder: (context, state) {
+              return const MaterialPage(child: CollectionPage());
+            },
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: Routes.cart,
+            name: Routes.cart,
+            pageBuilder: (context, state) {
+              return const MaterialPage(child: CartPage());
+            },
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: Routes.notification,
+            name: Routes.notification,
+            pageBuilder: (context, state) {
+              return const MaterialPage(child: NotificationTestPage());
+            },
+          ),
+        ],
+      ),
     ],
   );
 }

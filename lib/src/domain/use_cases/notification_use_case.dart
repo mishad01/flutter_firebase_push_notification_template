@@ -1,4 +1,5 @@
 import '../entities/notification_entity.dart';
+import '../entities/notification_payload_entity.dart';
 import '../repositories/notification_repository.dart';
 
 class InitializaNotificationUseCase {
@@ -16,5 +17,23 @@ class GetNotificationStreamUseCase {
 
   Stream<NotificationEntity> call() {
     return _repository.onNotification;
+  }
+}
+
+class GetFcmTokenUseCase {
+  GetFcmTokenUseCase(this._repository);
+  final NotificationRepository _repository;
+
+  Future<String?> call() {
+    return _repository.getFcmToken();
+  }
+}
+
+class GetNotificationPayloadUseCase {
+  GetNotificationPayloadUseCase(this._repository);
+  final NotificationRepository _repository;
+
+  NotificationPayloadEntity? call() {
+    return _repository.payload;
   }
 }

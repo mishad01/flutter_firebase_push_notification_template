@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../core/di/dependency_injection.dart';
 import '../../../../../core/extensions/app_localization.dart';
 import '../../../../../core/extensions/validation.dart';
 import '../../../../../core/utiliity/validation/validation.dart';
@@ -10,7 +11,9 @@ import '../../../../core/router/routes.dart';
 import '../../../../core/theme/theme.dart';
 import '../../../../core/widgets/link_text.dart';
 import '../../../../core/widgets/loading_indicator.dart';
+import '../../../../core/widgets/navigation_shell.dart';
 import '../../../../features/authentication/login/riverpod/login_provider.dart';
+import '../../../home/view/home_page.dart';
 import '../widgets/language_switcher.dart';
 
 part '../widgets/login_form.dart';
@@ -36,7 +39,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.listenManual(loginProvider, (previous, next) {
       switch (next) {
         case AsyncData(:final value) when value != null:
-          context.pushReplacementNamed(Routes.home);
+          // Check if there's an intended route to redirect to
+          final intendedRoute = ref
+              .read(getIntendedRouteUseCaseProvider)
+              .call();
+          if (intendedRoute != null) {
+            // Clear the intended route and redirect there
+            ref.read(clearIntendedRouteUseCaseProvider).call();
+            context.go(
+              intendedRoute,
+            ); // Use go instead of pushReplacementNamed for paths
+          } else {
+            // Default redirect to home
+            context.pushReplacementNamed(Routes.home);
+          }
         case AsyncError(:final error):
           ScaffoldMessenger.of(
             context,
@@ -94,7 +110,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Gap(context.spacing.s32),
               FilledButton(
                 onPressed: () {
-                  context.goNamed(Routes.home);
+                  _onLogin();
                 },
                 child: state.isLoading
                     ? const LoadingIndicator()

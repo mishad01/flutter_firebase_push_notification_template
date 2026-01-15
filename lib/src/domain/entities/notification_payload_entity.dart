@@ -1,3 +1,5 @@
+enum NotificationType { collection, cart, home }
+
 class NotificationPayloadEntity {
   NotificationPayloadEntity({
     required this.type,
@@ -5,7 +7,7 @@ class NotificationPayloadEntity {
     required this.collectionTitle,
     required this.checkOutUrl,
   });
-  final String type;
+  final NotificationType type;
   final String collectionId;
   final String collectionTitle;
   final String checkOutUrl;

@@ -20,4 +20,19 @@ class RouterRepositoryImpl extends RouterRepository {
   void saveOnboardingAsCompleted() {
     cacheService.save(CacheKey.isOnBoardingCompleted, true);
   }
+
+  @override
+  void saveIntendedRoute(String route) {
+    cacheService.save(CacheKey.intendedRoute, route);
+  }
+
+  @override
+  String? getIntendedRoute() {
+    return cacheService.get<String>(CacheKey.intendedRoute);
+  }
+
+  @override
+  void clearIntendedRoute() {
+    cacheService.remove([CacheKey.intendedRoute]);
+  }
 }

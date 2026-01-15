@@ -14,9 +14,7 @@ Future<void> appStartup(Ref ref) async {
     ref.invalidate(sharedPreferencesProvider);
   });
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await ref.watch(sharedPreferencesProvider.future);
 
