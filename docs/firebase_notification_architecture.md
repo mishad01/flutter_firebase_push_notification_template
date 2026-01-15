@@ -48,12 +48,13 @@ Created domain entities and repository interfaces before implementing any Fireba
 ```dart
 // Domain entities define business objects
 NotificationEntity - Core notification structure
-NotificationPayloadEntity - Custom payload data
+NotificationPayloadEntity - Custom payload data with NotificationType enum
 
 // Repository interface defines contracts
 abstract class NotificationRepository {
   Future<void> initializeNotification();
   Future<String?> getFcmToken();
+  NotificationPayloadEntity? get payload;
   Stream<NotificationEntity> get onNotification;
 }
 ```
@@ -79,6 +80,7 @@ Created two separate abstractions:
 abstract class NotificationService {
   Future<void> initialize();
   Future<String?> getFcmToken();
+  NotificationPayloadEntity? get payload;
   Stream<NotificationModel> get onNotification;
 }
 
@@ -86,6 +88,12 @@ abstract class NotificationService {
 class NotificationRepositoryImpl extends NotificationRepository {
   final NotificationService _notificationService;
   // Delegates to service but can add business logic
+  
+  @override
+  Stream<NotificationEntity> get onNotification => _notificationService.onNotification;
+  
+  @override
+  NotificationPayloadEntity? get payload => _notificationService.payload;
 }
 ```
 
@@ -97,6 +105,8 @@ class NotificationRepositoryImpl extends NotificationRepository {
 Created separate use cases for each notification operation:
 - `InitializaNotificationUseCase` - Initialize FCM
 - `GetNotificationStreamUseCase` - Stream notifications to UI
+- `GetFcmTokenUseCase` - Retrieve FCM token
+- `GetNotificationPayloadUseCase` - Access notification payload
 
 #### Rationale
 - **Single Responsibility**: Each use case has one clear purpose
@@ -122,6 +132,22 @@ class GetNotificationStreamUseCase {
     return _repository.onNotification;
   }
 }
+
+class GetFcmTokenUseCase {
+  final NotificationRepository _repository;
+  
+  Future<String?> call() {
+    return _repository.getFcmToken();
+  }
+}
+
+class GetNotificationPayloadUseCase {
+  final NotificationRepository _repository;
+  
+  NotificationPayloadEntity? call() {
+    return _repository.payload;
+  }
+}
 ```
 
 ---
@@ -142,6 +168,10 @@ Used `Stream<NotificationEntity>` to deliver notifications from service to UI la
 ```dart
 class NotificationServiceImpl {
   final _notificationController = StreamController<NotificationModel>.broadcast();
+  NotificationPayloadEntity? _payload;
+  
+  @override
+  NotificationPayloadEntity? get payload => _payload;
   
   Stream<NotificationModel> get onNotification => _notificationController.stream;
   
@@ -149,6 +179,16 @@ class NotificationServiceImpl {
   FirebaseMessaging.onMessage.listen((message) {
     final notification = _parseNotification(message);
     if (notification != null) {
+      _payload = notification.payload;
+      _notificationController.add(notification);
+    }
+  });
+  
+  // Also handles background and terminated states
+  FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    final notification = _parseNotification(message);
+    if (notification != null) {
+      _payload = notification.payload;
       _notificationController.add(notification);
     }
   });
@@ -181,8 +221,14 @@ class NotificationEntity {
 }
 
 // Data Model - Handles serialization
-@MappableClass()
-class NotificationModel extends NotificationEntity {
+@MappableClass(generateMethods: GenerateMethods.decode)
+class NotificationModel extends NotificationEntity with NotificationModelMappable {
+  NotificationModel({
+    required super.title,
+    required super.body,
+    required super.payload,
+  });
+  
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModelMapper.fromJson(json);
   }
@@ -246,6 +292,11 @@ NotificationService notificationService(Ref ref) {
 NotificationRepository notificationRepository(Ref ref) {
   return NotificationRepositoryImpl(ref.read(notificationServiceProvider));
 }
+
+@Riverpod(keepAlive: true)
+NotificationNavigationService notificationNavigationService(Ref ref) {
+  return NotificationNavigationService();
+}
 ```
 
 ---
@@ -283,8 +334,10 @@ NotificationModel? _parseNotification(RemoteMessage message) {
 #### Decision
 Defined a specific payload structure for business requirements:
 ```dart
+enum NotificationType { collection, cart, home }
+
 class NotificationPayloadEntity {
-  final String type;
+  final NotificationType type;
   final String collectionId;
   final String collectionTitle;
   final String checkOutUrl;
@@ -293,10 +346,117 @@ class NotificationPayloadEntity {
 
 #### Rationale
 - **Deep Linking**: Supports navigation to specific app screens
-- **Business Context**: Carries domain-specific information (collections, checkout)
-- **Type Safety**: Strongly typed fields prevent runtime errors
-- **Extensibility**: Easy to add new fields for future features
-- **Validation**: Can validate payload structure at parse time
+- **Business Context**: Carries domain-specific information (collections, checkout, cart)
+- **Type Safety**: Strongly typed enum prevents invalid notification types
+- **Extensibility**: Easy to add new notification types and fields
+- **Validation**: Type mapping validates payload structure at parse time
+- **Navigation Integration**: Works seamlessly with NotificationNavigationService
+
+---
+
+### 11. **Notification Navigation Service**
+
+#### Decision
+Created a dedicated `NotificationNavigationService` in the presentation layer to handle navigation based on notification payloads.
+
+#### Rationale
+- **Separation of Concerns**: Navigation logic separated from notification service
+- **Presentation Layer Responsibility**: Navigation is a UI concern, not domain logic
+- **Authentication Guards**: Respects router authentication guards for protected routes
+- **Reusability**: Can be used by multiple notification handlers
+- **Testability**: Navigation logic can be tested independently
+- **Type-Safe Routing**: Uses strongly-typed NotificationType enum
+
+#### Implementation
+```dart
+class NotificationNavigationService {
+  void handleNotificationNavigation(
+    GoRouter router,
+    NotificationPayloadEntity payload,
+  ) {
+    String targetRoute;
+    
+    switch (payload.type) {
+      case NotificationType.collection:
+        targetRoute = Routes.collection;
+        break;
+      case NotificationType.cart:
+        targetRoute = Routes.cart;
+        break;
+      case NotificationType.home:
+        targetRoute = Routes.home;
+        break;
+    }
+    
+    // Navigate to target route
+    // If protected and user not authenticated,
+    // router guard handles login redirection
+    router.go(targetRoute);
+  }
+}
+```
+
+---
+
+### 12. **Payload State Management**
+
+#### Decision
+Store the latest notification payload in the service layer and expose it through repository and use cases.
+
+#### Rationale
+- **State Persistence**: Preserves payload information for access after notification is received
+- **Navigation Coordination**: Allows delayed navigation when app state needs to be ready
+- **Multiple Access Points**: Payload available through getter without subscribing to stream
+- **Background/Terminated Handling**: Essential for handling initial message when app opens from notification
+- **Simplicity**: Simple getter pattern, no complex state management needed
+
+#### Implementation
+```dart
+class NotificationServiceImpl {
+  NotificationPayloadEntity? _payload;
+  
+  @override
+  NotificationPayloadEntity? get payload => _payload;
+  
+  // Update payload when notification received
+  final notification = _parseNotification(message);
+  if (notification != null) {
+    _payload = notification.payload;
+    _notificationController.add(notification);
+  }
+}
+```
+
+---
+
+## Component Responsibilities
+
+### 1. NotificationServiceImpl (Data Layer)
+- Initializes Firebase Messaging
+- Requests notification permissions
+- Manages FCM token with caching and refresh
+- Listens to foreground, background, and terminated state messages
+- Parses remote messages into domain models
+- Exposes notification stream
+- Stores latest notification payload
+
+### 2. NotificationRepositoryImpl (Data Layer)
+- Implements domain repository interface
+- Delegates to NotificationService
+- Bridges data and domain layers
+- Provides access to notification stream and payload
+
+### 3. Use Cases (Domain Layer)
+- **InitializeNotificationUseCase**: Initializes notification system
+- **GetNotificationStreamUseCase**: Provides stream of incoming notifications
+- **GetFcmTokenUseCase**: Retrieves FCM token for backend integration
+- **GetNotificationPayloadUseCase**: Accesses last notification payload
+
+### 4. NotificationNavigationService (Presentation Layer)
+- Handles navigation based on notification type
+- Maps payload data to routes
+- Respects authentication guards
+- Provides convenience methods for notification tap handling
 
 ---
 
@@ -306,10 +466,11 @@ class NotificationPayloadEntity {
 Cached FCM token in memory (`_cachedToken`) and provided `getFcmToken()` method.
 
 #### Rationale
-- **Performance**: Avoid unnecessary async calls to Firebase
+- **Performance**: Return cached token first for immediate access
 - **Backend Integration**: Token needed to send targeted notifications
-- **Token Refresh**: Can implement token refresh logic in one place
+- **Token Refresh**: Automatically updates cache when Firebase refreshes token
 - **Offline Support**: Cached token available even if Firebase is temporarily unavailable
+- **Fallback Strategy**: getFcmToken() provides fallback if cache is empty
 
 #### Implementation
 ```dart
@@ -320,10 +481,23 @@ class NotificationServiceImpl {
     final fcmToken = await _firebaseMessaging.getToken();
     _cachedToken = fcmToken;
     Log.info('FCM Token Cached: $_cachedToken');
+    
+    // Handle FCM token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      _cachedToken = newToken;
+      Log.info('FCM Token refreshed: $newToken');
+      // TODO: Send updated token to backend
+    });
   }
   
   Future<String?> getFcmToken() async {
-    return await FirebaseMessaging.instance.getToken();
+    // Return cached token first (faster)
+    if (_cachedToken != null) return _cachedToken;
+    
+    // Fallback to fresh token request
+    final token = await FirebaseMessaging.instance.getToken();
+    _cachedToken = token;
+    return token;
   }
 }
 ```
